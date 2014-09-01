@@ -31,8 +31,8 @@ I will use 6 arguments:
 -i or --imagemode for image creation mode.
 -c or --colors for setting the colors.
 -s or --show_secound for showing second hand.
--w or --help for set width.
--H or --help for setting height.'''
+-w or --width for set width.
+-H or --height for setting height.'''
 		try:
 			opts,args=getopt.getopt(argv,'hic:sw:H:',['help','imagemode','colors=','show_second','width=','height='])
 		except getopt.GetoptError:
@@ -45,10 +45,16 @@ I will use 6 arguments:
 			elif opt in ('-i','--imagemode'):
 				self.mode=1 #setting mode to image mode
 			elif opt in ('-c','--colors'):
-				if arg=='r':
-					print 'color chooser part is a TODO!!!'
+				printf 'color is a TODO!'
 			elif opt in ('-s','--show_second'):
 				self.show_sec=True
+			elif opt in ('-w','--width'):
+				if int(arg)<800 and int(arg)>50:
+					self.GWIDTH=int(arg)
+					print 'GWIDTH sat to ',arg
+			elif opt in ('-H','--height'):
+				if int(arg)<800 and int(arg)>50:
+					self.GHEIGHT=int(arg)
 
 	def usage(self):
 		print '''a1000 anaClock application is a simple analog clock creator for using as a widget or
@@ -56,7 +62,7 @@ image clock generator for conky.
 this software is a free software under GNU GPL version 3 license and any compatible license. after that'''
 	def gtk_ui_init(self):
 		self.root=gtk.Window()	
-		self.root.set_size_request(100,100)
+		self.root.set_size_request(self.GWIDTH,self.GHEIGHT)
 		self.root.set_title("AnaClock")
 		bgcolor=gtk.gdk.color_parse("#393939")
 		self.root.modify_bg(gtk.STATE_NORMAL,bgcolor)
