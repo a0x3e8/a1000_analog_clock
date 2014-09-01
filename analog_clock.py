@@ -45,7 +45,7 @@ I will use 6 arguments:
 			elif opt in ('-i','--imagemode'):
 				self.mode=1 #setting mode to image mode
 			elif opt in ('-c','--colors'):
-				printf 'color is a TODO!'
+				print 'color is a TODO!'
 			elif opt in ('-s','--show_second'):
 				self.show_sec=True
 			elif opt in ('-w','--width'):
