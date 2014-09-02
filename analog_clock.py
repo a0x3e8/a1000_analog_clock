@@ -19,7 +19,6 @@ class AnaClock(object):
 #self.clockFaceRad=radius of the clock face.
 	def __init__(self,argv):
 		self.cli_parser(argv)
-		print self.mode
 		if self.mode==0:
 			self.gtk_ui_init()
 		else:
@@ -45,7 +44,7 @@ I will use 6 arguments:
 			elif opt in ('-i','--imagemode'):
 				self.mode=1 #setting mode to image mode
 			elif opt in ('-c','--colors'):
-				printf 'color is a TODO!'
+				print 'color is a TODO!'
 			elif opt in ('-s','--show_second'):
 				self.show_sec=True
 			elif opt in ('-w','--width'):
@@ -55,6 +54,7 @@ I will use 6 arguments:
 			elif opt in ('-H','--height'):
 				if int(arg)<800 and int(arg)>50:
 					self.GHEIGHT=int(arg)
+					print 'GWIDTH sat to ',arg
 
 	def usage(self):
 		print '''a1000 anaClock application is a simple analog clock creator for using as a widget or
@@ -64,8 +64,6 @@ this software is a free software under GNU GPL version 3 license and any compati
 		self.root=gtk.Window()	
 		self.root.set_size_request(self.GWIDTH,self.GHEIGHT)
 		self.root.set_title("AnaClock")
-		bgcolor=gtk.gdk.color_parse("#393939")
-		self.root.modify_bg(gtk.STATE_NORMAL,bgcolor)
 		self.root.connect('destroy',gtk.main_quit)
 		self.dArea=gtk.DrawingArea()
 		self.dArea.connect('expose-event',self.expose)
@@ -120,24 +118,27 @@ this software is a free software under GNU GPL version 3 license and any compati
 			self.surface=widget.window.cairo_create()
 		else:
 			self.surface=cairo.Context(widget)
-		self.surface.set_source_rgb(1,1,1)
+		#next line will set the clock face.
+		self.surface.set_source_rgb(.9,.9,.9)
 		self.surface.arc(self._center[0],self._center[1],self.clockFaceRad,0,2*math.pi)
 		self.surface.fill()
 		self.surface.stroke()
 #drawing numbers:
+		#number colors
 		self.surface.set_source_rgb(0.2,0.2,0.2)
-		self.surface.set_line_width(self.clockFaceRad/15)
+		self.surface.set_line_width(self.clockFaceRad/7)
 		for a in range(0,12):
 			self.surface.arc(self._center[0],self._center[1],self.clockFaceRad-self.clockFaceRad/10,a*math.pi/6-0.01*math.pi,a*math.pi/6+0.01*math.pi)
 			self.surface.stroke()
 #drawing the border:
 		self.surface.set_source_rgb(0.6, 0.6, 0.6)
-		borderMinus=self.clockFaceRad/10
+		borderMinus=self.clockFaceRad/8
 		self.surface.set_line_width(borderMinus)
 		self.surface.arc(self._center[0],self._center[1],self.clockFaceRad-borderMinus/2,0,2*math.pi)
 		self.surface.stroke()
 		
 		self.surface.set_line_width(borderMinus/2)
+		#inner border
 		self.surface.set_source_rgb(0.3, 0.3, 0.3)
 		self.surface.arc(self._center[0],self._center[1],self.clockFaceRad-borderMinus/2,0,2*math.pi)
 		self.surface.stroke()
@@ -160,9 +161,11 @@ get_time function.'''
 		minutes=time_tuple[1]
 		sec=time_tuple[2]
 		self.surface.move_to(self._center[0],self._center[1])
+#round line ends:
+		self.surface.set_line_cap(cairo.LINE_CAP_ROUND)
 		#draw clock hands:
 #hour hand:
-		self.surface.set_source_rgb(0,0,0)
+		self.surface.set_source_rgb(0.5,0.5,1)
 		self.surface.set_line_width(self.clockFaceRad/15)
 		handEndx=self._center[0]+self.smallHandR*math.cos(((hour-3)*math.pi)/6+(minutes*math.pi)/360)
 		handEndy=self._center[1]+self.smallHandR*math.sin(((hour-3)*math.pi)/6+(minutes*math.pi)/360)
@@ -173,7 +176,7 @@ get_time function.'''
 		handEndx=self._center[0]+self.bigHandRad*math.cos(((minutes-15)*math.pi)/30)
 		handEndy=self._center[1]+self.bigHandRad*math.sin(((minutes-15)*math.pi)/30)
 		self.surface.move_to(self._center[0],self._center[1])
-		self.surface.set_source_rgb(0,0,0)
+		self.surface.set_source_rgb(0.5,0.5,1)
 		self.surface.set_line_width(self.clockFaceRad/18)
 		self.surface.line_to(handEndx,handEndy)
 		self.surface.stroke()
