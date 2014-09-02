@@ -150,7 +150,7 @@ this software is a free software under GNU GPL version 3 license and any compati
 		self.surface.fill()
 		self.surface.stroke()
 		return True
-	def hand_drawer(self):
+	def hand_drawer(self,handBorders=True):
 		'''this function will draw the clock hands from the time given by the 
 get_time function.'''
 
@@ -165,19 +165,39 @@ get_time function.'''
 		self.surface.set_line_cap(cairo.LINE_CAP_ROUND)
 		#draw clock hands:
 #hour hand:
-		self.surface.set_source_rgb(0.5,0.5,1)
-		self.surface.set_line_width(self.clockFaceRad/15)
+		
+#this can be an option. 
+#drawing a black border for clock hands is like this:
+#so first we draw a black line and then colored line on top of it.
+#I may remove this in future.
 		handEndx=self._center[0]+self.smallHandR*math.cos(((hour-3)*math.pi)/6+(minutes*math.pi)/360)
 		handEndy=self._center[1]+self.smallHandR*math.sin(((hour-3)*math.pi)/6+(minutes*math.pi)/360)
+
+		if handBorders:
+			self.surface.set_source_rgb(0,0,0)
+			self.surface.set_line_width(self.clockFaceRad/15)
+			self.surface.line_to(handEndx,handEndy)
+			self.surface.stroke()
+			self.surface.move_to(self._center[0],self._center[1])
+		self.surface.set_source_rgb(0.5,0.5,1)
+		self.surface.set_line_width((self.clockFaceRad/15)-2)
 		self.surface.line_to(handEndx,handEndy)
 		self.surface.stroke()
+
 
 #minute hand:
 		handEndx=self._center[0]+self.bigHandRad*math.cos(((minutes-15)*math.pi)/30)
 		handEndy=self._center[1]+self.bigHandRad*math.sin(((minutes-15)*math.pi)/30)
+		if handBorders:
+			self.surface.move_to(self._center[0],self._center[1])
+			self.surface.set_source_rgb(0,0,0)
+			self.surface.set_line_width(self.clockFaceRad/18)
+			self.surface.line_to(handEndx,handEndy)
+			self.surface.stroke()
+
 		self.surface.move_to(self._center[0],self._center[1])
 		self.surface.set_source_rgb(0.5,0.5,1)
-		self.surface.set_line_width(self.clockFaceRad/18)
+		self.surface.set_line_width(self.clockFaceRad/18-2)
 		self.surface.line_to(handEndx,handEndy)
 		self.surface.stroke()
 #sec hand:
