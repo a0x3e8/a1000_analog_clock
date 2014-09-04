@@ -6,7 +6,10 @@ import gtk
 import cairo
 import gobject
 import sys, getopt
+import threading
 class AnaClock(object):
+#stop_event variable is for stopping update thread.
+	stop_event=False
 	mode=0  #default is gtk interface mode. 1 will be imagemode.
 	show_sec=False
 	GWIDTH= 100
@@ -61,14 +64,25 @@ I will use 6 arguments:
 image clock generator for conky.
 this software is a free software under GNU GPL version 3 license and any compatible license. after that'''
 	def gtk_ui_init(self):
+		#making second thread for updating:
+		gtk.gdk.threads_init()
 		self.root=gtk.Window()	
 		self.root.set_size_request(self.GWIDTH,self.GHEIGHT)
 		self.root.set_title("AnaClock")
+		self.root.connect('destroy',self.stop_thread)
 		self.root.connect('destroy',gtk.main_quit)
 		self.dArea=gtk.DrawingArea()
 		self.dArea.connect('expose-event',self.expose)
 		self.root.connect('check-resize',self.resize)
-		self.timer=gobject.timeout_add(1000,self.expose,self.dArea,None)
+		
+#self.timer=gobject.timeout_add(1000,self.expose,self.dArea,None)
+#gobject update method has a problem that causes flickers when updating window.
+#so I used a thread to update drawing area every second and for stopping that thread,
+#there is a variable called 'stop_event' that will be change to True by a function named 'stop_thread'
+#setting this variable to True will cause thread function loop to end.
+		##create thread:
+		self.thr=threading.Thread(target=self.update_event)
+		self.thr.start()
 
 		#now default clock center and size. if resized, resize function will change this.
 		self._center=self.root.get_size_request()
@@ -89,7 +103,7 @@ this software is a free software under GNU GPL version 3 license and any compati
 		self.root.show_all()
 		gtk.main()
 #end of init function.###################################
-
+#some event launcher for refrashing window.:
 #expose event will draw clock nice and easy...
 	def image_init(self):
 		self.root=cairo.ImageSurface(cairo.FORMAT_ARGB32,self.GWIDTH,self.GHEIGHT)
@@ -112,6 +126,15 @@ this software is a free software under GNU GPL version 3 license and any compati
 		except:
 			print 'error writing to file.'
 			exit(2)
+
+#this function does the updating task. while stop_event is False, it will update dArea every second.
+	def update_event(self):
+		while self.stop_event==False:
+			self.dArea.queue_draw()
+			time.sleep(1)
+#just sets stop_event to True to stop the update thread.
+	def stop_thread(self,widget,data=None):
+			self.stop_event=True
 
 	def expose(self,widget,data=None):
 		if self.mode==0:
@@ -235,7 +258,6 @@ get_time function.'''
 		self.smallHandR=self.clockFaceRad*3/5
 		self.bigHandRad=self.clockFaceRad*3/4
 		self.secHandRad=self.clockFaceRad*6/8
-
 		self.expose(self.root)
 ####################################################
 class image_clock(AnaClock):
