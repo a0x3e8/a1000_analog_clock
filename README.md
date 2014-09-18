@@ -15,6 +15,7 @@ with command line arguments you will be able to costumize the clock:
 if you want to use this clock in conky, you should call it with '-i' argument.
 this switch will cause the program to create output as png image instead of 
 rendering it in a gtk window.
+
 ##TODO:
 - commandline arguments.
 - colors
