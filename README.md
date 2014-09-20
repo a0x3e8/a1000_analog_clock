@@ -18,9 +18,9 @@ this switch will cause the program to create output as png image instead of
 rendering it in a gtk window.
 
 ## use in conky:
-save .py file somewhere in your home directory.
-open conkyrc file.
-add following lines to file and save it:
+1)save .py file somewhere in your home directory.
+2)open conkyrc file.
+3)add following lines to file and save it:
 
 ```code
 ${execpi 0.8 python PATH//analog_clock.py -s -i -w 150 -H 150>/dev/null}
