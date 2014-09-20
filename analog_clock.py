@@ -144,11 +144,10 @@ this software is a free software under GNU GPL version 3 license and any compati
 		#next line will set the clock face.
 		self.surface.set_source_rgb(.9,.9,.9)
 		self.surface.arc(self._center[0],self._center[1],self.clockFaceRad,0,2*math.pi)
-		self.surface.fill()
 		self.surface.stroke()
 #drawing numbers:
 		#number colors
-		self.surface.set_source_rgb(0.2,0.2,0.2)
+		self.surface.set_source_rgb(0.9,0.2,0.2)
 		self.surface.set_line_width(self.clockFaceRad/7)
 		for a in range(0,12):
 			self.surface.arc(self._center[0],self._center[1],self.clockFaceRad-self.clockFaceRad/10,a*math.pi/6-0.01*math.pi,a*math.pi/6+0.01*math.pi)
