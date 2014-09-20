@@ -12,10 +12,22 @@ with command line arguments you will be able to costumize the clock:
 - -H [height] sets the height of the clock face.
 - -s visible second hand
 - -i image mode.
+
 if you want to use this clock in conky, you should call it with '-i' argument.
 this switch will cause the program to create output as png image instead of 
 rendering it in a gtk window.
 
+## use in conky:
+save .py file somewhere in your home directory.
+open conkyrc file.
+add following lines to file and save it:
+
+```code
+${execpi 0.8 python PATH//analog_clock.py -s -i -w 150 -H 150>/dev/null}
+${image PATH/clock_face.png -p 30,330 -s 150x150}
+```
+PATH will be where you saved .py file.
+how you will change this setting is up to you and your conky setting. these are my settings.
 ##TODO:
 - commandline arguments.
 - colors
